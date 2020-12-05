@@ -42,9 +42,29 @@ function solvePartOne() {
     }).sort((a, b) => b - a)
 
 
-    console.log(data)
+    console.log(data[0])
 }
 
+
+function solvePartTwo() {
+    const data = importFile().map((current) => {
+        const row = current.slice(0, 7).split('')
+        const column = current.slice(7, 10).split('')
+        const columnNum = searchC(column, 0, 7, 'R')
+        const rowNum = searchR(row, 0, 127, 'B')
+        return (rowNum * 8) + columnNum
+    }).sort((a, b) => a - b)
+
+    for (let i = 1; i < data.length - 2; i++) {
+        if (data[i + 1] - data[i] !== 1) {
+            console.log(data[i]+1)
+        }
+    }
+
+}
+
+
 solvePartOne()
+solvePartTwo()
 
 
