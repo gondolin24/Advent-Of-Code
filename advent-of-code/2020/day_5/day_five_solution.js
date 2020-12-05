@@ -1,3 +1,5 @@
+// https://adventofcode.com/2020/day/5/answer -> 978
+// https://adventofcode.com/2020/day/5#part2 -> 727
 const fs = require('fs')
 
 function importFile() {
