@@ -26,6 +26,7 @@ function solvePartTwo() {
         const personAnswers = group.split(('\r\n'))
             .filter(a => a !== '')
             .map((a) => a.split(''))
+
         personAnswers.forEach((answerList) => {
             answerList.forEach((answer) => {
                 if (!map[answer]) {
