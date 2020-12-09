@@ -1,4 +1,5 @@
-//https://adventofcode.com/2020/day/7
+//https://adventofcode.com/2020/day/7 => 101
+// part 2 -> 108636
 const fs = require('fs')
 
 function importFile() {
@@ -23,8 +24,9 @@ class Bag {
             return new Bag(bagType, [])
         }
         const subBag = processedBag.map((data) => {
-            const numBags = data.substr(0, processedBag.indexOf(' '))
-            const subBagType = data.substr(data.indexOf(' ') + 1);
+            const dd = data.trim()
+            const numBags = dd.substr(0, dd.indexOf(' '))
+            const subBagType = dd.substr(dd.indexOf(' ') + 1);
             return {
                 bagType: subBagType,
                 numBags: Number(numBags)
@@ -42,6 +44,39 @@ class LuggageProcessing {
         this.bagMap = bagMap
     }
 
+    getBag(value) {
+        return Object.values(this.bagMap).find((a) => value.includes(a.bagType))
+    }
+
+    getAllChildrenFlat(children) {
+        return children.map((a) => {
+            let g = 0
+            const arr = []
+            while (g < a.numBags) {
+                arr.push(a.bagType)
+                g++
+            }
+            return arr
+        }).flat()
+    }
+
+    get costOfGolden() {
+        let children = this.getBag('shiny gold bag').subBag
+        let flatChildren = this.getAllChildrenFlat(children)
+        let count = 0
+        while (flatChildren.length > 0) {
+
+            count = count + flatChildren.length
+            const ff = flatChildren.map(a => {
+                const rr = this.getBag(a).subBag
+                return this.getAllChildrenFlat(rr)
+            }).flat()
+            flatChildren = ff
+        }
+        return count
+
+    }
+
     get goldenBagStars() {
         let parents = Object.values(this.bagMap).filter(a => a.hasSubBag('shiny gold bag'))
         let gg = parents
@@ -53,7 +88,7 @@ class LuggageProcessing {
             gg = gg.concat(newParents)
             parents = newParents
         }
-        return new Set(gg.map((a)=>a.bagType))
+        return new Set(gg.map((a) => a.bagType))
     }
 
 
@@ -75,8 +110,13 @@ function solvePartOne() {
     const data = importFile()
     const luggageDepartment = LuggageProcessing.fromRawData(data)
     console.log(luggageDepartment.goldenBagStars.size)
-
 }
 
+function solvePartTwo() {
+    const data = importFile()
+    const luggageDepartment = LuggageProcessing.fromRawData(data)
+    console.log(luggageDepartment.costOfGolden)
+}
 
 solvePartOne()
+solvePartTwo()
