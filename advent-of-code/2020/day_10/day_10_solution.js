@@ -31,15 +31,23 @@ function findNextVoltage(adaptor, array) {
     return diff <= 3 && diff > 0
 }
 
-function solvePartOne() {
+function sortedData() {
     const data = importFile()
 
     let sortedJolts = data.sort((a, b) => a - b)
-    const max = sortedJolts[sortedJolts.length - 1]
+
+    return sortedJolts
+}
+
+
+function solve(arr) {
     const metaData = new GangstersParadise()
-    sortedJolts.push(0)
-    sortedJolts.push(max + 3)
-    sortedJolts = data.sort((a, b) => a - b)
+    const dd = [...arr.sort((a, b) => a - b)]
+    const max = dd[dd.length - 1]
+    dd.push(0)
+    dd.push(max + 3)
+    const sortedJolts = dd.sort((a, b) => a - b)
+
     while (sortedJolts.length > 0) {
         let current = sortedJolts.shift()
         const result = findNextVoltage(current, sortedJolts)
@@ -48,10 +56,55 @@ function solvePartOne() {
             metaData.add(math)
         }
     }
-
-
-    console.log(metaData.oneCount * metaData.threeCount)
+    return metaData.oneCount * metaData.threeCount
 }
 
+function solvePartOne() {
+    const metaData = new GangstersParadise()
+    const sortedJolts = [...sortedData()]
+    return solve(sortedJolts)
+}
 
-solvePartOne()
+const powerset = (array) => {
+    const results = [[]];
+    for (const value of array) {
+        const copy = [...results]; // See note below.
+        for (const prefix of copy) {
+            results.push(prefix.concat(value));
+        }
+    }
+    return results;
+};
+
+
+function solvePartTwo() {
+    const sortedJolts = [...sortedData()]
+    const powerSet = powerset(sortedJolts)
+    const maxMe = sortedJolts[sortedJolts.length - 1] + 3
+    const preFilter = powerSet.filter((a) => {
+        const max = a[a.length - 1] + 3
+        return max === maxMe;
+    })
+    const gg = preFilter.sort((a, b) => b.length - a.length).map((set) => {
+        const dd = [...set.sort((a, b) => a - b)]
+        const max = dd[dd.length - 1]
+
+        dd.push(0)
+        dd.push(max + 3)
+        const sJ = dd.sort((a, b) => a - b)
+        while (sJ.length > 1) {
+            let current = sJ.shift()
+            const result = findNextVoltage(current, sJ)
+            if (!result) {
+                return 0
+            }
+        }
+        return 1
+    })
+
+    return gg.reduce((a, b) => b + a, 0)
+
+}
+
+console.log(solvePartOne())
+console.log(solvePartTwo())
